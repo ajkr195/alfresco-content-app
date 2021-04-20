@@ -13,6 +13,8 @@
     <aca-generic-error></aca-generic-error>
   </aca-page-layout-error>
 
+
+
   <aca-page-layout-content>
     <div class="main-content">
       <adf-upload-drag-area [rootFolderId]="node?.id" [disabled]="!canUpload" (updateFileVersion)="onUploadNewVersion($event)">
@@ -65,6 +67,7 @@
                   [sortingKey]="column.sortingKey || column.key"
                 >
                 </data-column>
+
               </ng-container>
             </ng-container>
           </data-columns>
@@ -79,6 +82,10 @@
             </ng-container>
           </adf-custom-empty-content-template>
         </adf-document-list>
+
+        <adf-document-list #documentList [currentFolderId]="node?.id"></adf-document-list>
+
+
 
         <adf-pagination acaPagination [target]="documentList"> </adf-pagination>
       </adf-upload-drag-area>

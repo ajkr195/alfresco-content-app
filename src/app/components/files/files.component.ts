@@ -37,6 +37,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { FilterSearch, ShareDataRow } from '@alfresco/adf-content-services';
 import { DocumentListPresetRef } from '@alfresco/adf-extensions';
+import { NodesApiService } from '@alfresco/adf-core';
 
 @Component({
   templateUrl: './files.component.html'
@@ -61,7 +62,7 @@ export class FilesComponent extends PageComponent implements OnInit, OnDestroy {
     private uploadService: UploadService,
     content: ContentManagementService,
     extensions: AppExtensionService,
-    private breakpointObserver: BreakpointObserver
+    private breakpointObserver: BreakpointObserver,private nodeService: NodesApiService
   ) {
     super(store, extensions, content);
   }
@@ -170,20 +171,47 @@ export class FilesComponent extends PageComponent implements OnInit, OnDestroy {
     this.store.dispatch(new UploadFileVersionAction(ev));
   }
 
+
+
   navigateTo(node: MinimalNodeEntity) {
     if (node && node.entry) {
       this.selectedNode = node;
-      const { id, isFolder } = node.entry;
+      const { id, isFolder, } = node.entry;
 
       if (isFolder) {
         this.documentList.resetNewFolderPagination();
         this.navigate(id);
+        this.myOnNodeClick(id);
         return;
       }
 
       this.showPreview(node, { location: this.router.url });
+
     }
+
   }
+
+
+
+  myOnNodeClick(nodeId) {
+    console.log("You clicked on the node '" + nodeId + "'.");
+
+    this.nodeService.getNode(nodeId)
+    .subscribe(
+        (node) => {
+            console.log(node.properties);
+        }, () => { console.log("Error occurred!"); }
+    );
+
+    this.nodeService.getNodeChildren(nodeId)
+    .subscribe(
+        (nodePaging) => {
+            console.log(nodePaging.list.entries);
+        }, () => { console.log("Error occurred!"); }
+    );
+}
+
+
 
   onBreadcrumbNavigate(route: PathElementEntity) {
     this.documentList.resetNewFolderPagination();
